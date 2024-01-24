@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 void main() {
   runApp(const MyApp());
@@ -11,11 +10,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      // title: 'Flutter Demo',
-      // theme: ThemeData(
-      //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      //   // useMaterial3: true,
-      // ),
       home: Calculator(),
     );
   }
@@ -29,14 +23,81 @@ class Calculator extends StatefulWidget {
 }
 
 class _CalculatorState extends State<Calculator> {
-  String equation = "0";
-  String result = "0";
-  String expression = "";
-  double equationFontSize = 38.0;
-  double resultFontSize = 48.0;
+  String result = '';
+  String expression = '';
+  String op = '';
+  double temp = 0;
 
   buttonPressed(String buttonText) {
-
+    setState(() {
+      if (buttonText == 'AC') {
+        result = '';
+      }
+      else if (buttonText == 'C') {
+        result = result.substring(0, result.length - 1);
+      }
+      else if (
+        buttonText == '1' || 
+        buttonText == '2' || 
+        buttonText == '3' ||
+        buttonText == '4' ||
+        buttonText == '5' ||
+        buttonText == '6' ||
+        buttonText == '7' ||
+        buttonText == '8' ||
+        buttonText == '9' ||
+        buttonText == '0' ||
+        buttonText == '.'
+        ) {
+        result += buttonText;
+      }
+      else if (
+        buttonText == '+' ||
+        buttonText == '-' ||
+        buttonText == 'x' ||
+        buttonText == '÷'
+      ) {
+        expression = result;
+        temp = double.parse(expression);
+        result = '';
+        switch (buttonText) {
+          case '+':
+            op = '+';
+            break;
+          case '-':
+            op = '-';
+            break;
+          case 'x':
+            op = 'x';
+            break;
+          case '÷':
+            op = '÷';
+            break;
+        }
+      }
+      else if (buttonText == '=') {
+        expression = result;
+        switch (op) {
+          case '+':
+            temp += double.parse(expression);
+            break;
+          case '-':
+            temp -= double.parse(expression);
+            break;
+          case 'x':
+            temp *= double.parse(expression);
+            break;
+          case '÷':
+            temp /= double.parse(expression);
+            break;
+        }
+        result = temp.toString();
+        op = '';
+      }
+      else {
+        result = 'ERROR';
+      }
+    });
   }
 
   @override
@@ -71,26 +132,10 @@ class _CalculatorState extends State<Calculator> {
                       ],
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Text(
-                            equation,
-                            style: const TextStyle(
-                              fontSize: 40.0,
-                              color: Colors.white
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 30.0,)
-                      ],
-                    ),
-                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SizedBox(
-                          width: 70.0,
+                          width: 160.0,
                           height: 70.0,
                           child: TextButton(
                             style: ButtonStyle(
@@ -109,7 +154,7 @@ class _CalculatorState extends State<Calculator> {
                           ),
                         ),
                         const SizedBox(width: 20.0),
-                                                SizedBox(
+                        SizedBox(
                           width: 70,
                           height: 70,
                           child: TextButton(
@@ -122,26 +167,6 @@ class _CalculatorState extends State<Calculator> {
                             },
                             child: const Text(
                               'C',
-                              style: TextStyle(
-                                fontSize: 30.0
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 20.0),
-                        SizedBox(
-                          width: 70,
-                          height: 70,
-                          child: TextButton(
-                            style: ButtonStyle(
-                              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                              backgroundColor: MaterialStateProperty.all<Color>(Colors.orange)
-                            ),
-                            onPressed: () {
-                              buttonPressed('%');
-                            },
-                            child: const Text(
-                              '%',
                               style: TextStyle(
                                 fontSize: 30.0
                               ),
@@ -442,10 +467,10 @@ class _CalculatorState extends State<Calculator> {
                               backgroundColor: MaterialStateProperty.all<Color>(Colors.grey)
                             ),
                             onPressed: () {
-                              buttonPressed('00');
+                              buttonPressed('0');
                             },
                             child: const Text(
-                              '00',
+                              '0',
                               style: TextStyle(
                                 fontSize: 30.0
                               )
